@@ -1,7 +1,4 @@
-var fps = 1;
-/** refactoring */
 
-/** refactoring */
 // инициализация
 function init(){
     canvas = this.document.getElementById('game');
@@ -10,38 +7,42 @@ function init(){
     context = canvas.getContext('2d'); 
 
 
-
-    let center_player = canvas.offsetWidth / 2 - beam_setting.width / 2;
+    let center_player = canvas.offsetWidth / 2 - config.player.size.width / 2;
     let bottom_player = canvas.offsetHeight - 50;
-    player_position.x = center_player;
-    player_position.y = bottom_player;
+    config.player.position.x = center_player;
+    config.player.position.y = bottom_player;
+    // config.player.position.y = 250;
+
+    let center_boll = canvas.offsetWidth / 2 - config.boll.size.width / 2;
+    let bottom_boll = config.player.position.y - config.boll.size.height;
+    config.boll.position.x = center_boll;
+    config.boll.position.y = bottom_boll;
+
+    config.boll.speed.x = getRandomArbitrary(-level,level);
+    config.boll.speed.y = -1 * getRandomArbitrary(1,level);
 
 
-
-    
-    let center_boll = canvas.offsetWidth / 2 - boll_setting.width / 2;
-    let bottom_boll = canvas.offsetHeight - (50 + beam_setting.height);
-    boll_position.x = center_boll;
-    boll_position.y = bottom_boll;
-    boll_position.y = 335;
-
-    // boll_speed.x = getRandomArbitrary(-level,level);
-    boll_speed.x = 0;
-    // boll_speed.y = getRandomArbitrary(1,level);
-    boll_speed.y = -1;
-
-
-    player = new Beam(false);
-    draw_boll();
-    draw_player();
-    draw_enemy(enemy_len);
-
+    init_object();
+    draw();
+    init_events();
+    requestAnimationFrame(update);
 }
 
-function getRandomArbitrary(min, max) {
-    return Math.random() * (max - min) + min;
-  }
-
+function init_object(){
+    player = new Player();
+    player.setPositions(config.player.position);
+    boll = new Boll(false);
+    boll.setPositions(config.boll.position);
+    boll.setSpeed(config.boll.speed);
+    for(let i = 0; i < enemy_len; i++){
+        enemys.push(new Enemy());
+    }
+}
+function init_events(){
+    document.addEventListener('keydown',
+        (event) => player.keydown(event.key));
+    document.addEventListener('keyup', () => player.keyup());
+}
 /** ############### ренедр ####################*/ 
 
 // рисуем врагов
@@ -49,11 +50,8 @@ function draw_enemy(length_enemy){
     let y = 20;
     let def_x = 10;
     let x = def_x;
-    // enemy.splice(0,enemy.length);
-    // enemy.length = 0;
-    enemy = [];
     for(let index = 0; index < length_enemy; index++){
-        let _enemy = new Beam();
+        let _enemy = enemys[index];
         _enemy.setPosition(x, y);
         _enemy.draw();
         x += _enemy.width + _enemy.margin;
@@ -61,50 +59,34 @@ function draw_enemy(length_enemy){
             y += _enemy.height + _enemy.margin;
             x = def_x;
         }
-        enemy.push(_enemy);
-        delete _enemy;
     }
 }
 // рисуем мяч
 function draw_boll(){
-    boll = new Boll(false);
-    boll.setPositions(boll_position);
+    boll.go();
     boll.draw();
-    
-    boll_position.x += boll_speed.x;
-    boll_position.y -= boll_speed.y;
 }
 // рисуем игрока
 function draw_player(){
-    
-    player.setPosition(player_position.x, player_position.y);
+    player.go();
     player.setColor('#000000');
-    player.draw();
-
     player.touch(boll);
+    player.draw();
 }
 // рисуем все
 function draw(){
     draw_boll();
     draw_player();
     draw_enemy(enemy_len);
+    
 }
-// функция для отрисовки белового экрана и нового кадра
-// function update(){
-
-//     requestAnimationFrame(update);
-// }
-
 
  
 function update() {
-    context.clearRect(0,0, canvas.width, canvas.height);
-    draw();
     setTimeout(() => {
-        if(_update === false) return;
+        if(debug_update === false) return;
         requestAnimationFrame(update);
- 
-        // ... Code for Drawing the Frame ...
- 
+        context.clearRect(0,0, canvas.width, canvas.height);
+        draw()
     }, 1000 / fps);
 }
