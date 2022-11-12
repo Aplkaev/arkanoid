@@ -1,4 +1,3 @@
-
 /**
  * Общий класс для настроек
  */
@@ -9,44 +8,53 @@ class ParentObject {
     color = '#C44ED9';
     // остается, но не рисуем
     invisible = false;
+
     constructor(is_enemy = true) {
         this.is_enemy = is_enemy;
     }
+
     // позиция
     setPosition(x, y) {
         this.x = x;
         this.y = y;
     }
+
     // позиция
     setPositions(position) {
         this.x = position.x;
         this.y = position.y;
     }
+
     // задаем цвет
     setColor(color) {
         this.color = color;
     }
+
     // проверка позици и колизии
     checkPosition() {
 
     }
+
     // изменение вектора
     changeVector(aox) {
 
     }
+
     //отрисовка предмета
-    draw(){
+    draw() {
 
     }
+
     //движение предмета
-    go(){
+    go() {
 
     }
 }
 
-class Stick extends ParentObject{
+class Stick extends ParentObject {
     width = 100;
     height = 20;
+
     /**
      * проверка прикосновения мяча
      * @param boll - class Boll
@@ -63,7 +71,7 @@ class Stick extends ParentObject{
         }
     }
 
-    checkArea(boll){
+    checkArea(boll) {
         return (
             this.y - (boll.y + boll.height) <= 0 &&
             (this.y + this.height) - (boll.y - boll.height) > 0 &&
@@ -72,7 +80,7 @@ class Stick extends ParentObject{
         )
     }
 
-    checkHorizonLine(boll){
+    checkHorizonLine(boll) {
         if (
             // левая точка платформы и права точка шара
             this.x >= boll.x + boll.width ||
@@ -84,7 +92,7 @@ class Stick extends ParentObject{
         }
     }
 
-    checkVerticalLine(boll){
+    checkVerticalLine(boll) {
         if (
             // верхняя точка платформы и нижняя точка шара
             this.y >= boll.y ||

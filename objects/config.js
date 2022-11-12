@@ -3,6 +3,8 @@ let context;
 let fps = 120;
 
 let player;
+let st_player = false;
+let player2;
 let boll;
 let enemys = [];
 // уровень сложности
@@ -14,13 +16,19 @@ let debug_update = true;
 let enemy_len = 10;
 // противники на карте
 let enemy_map = [];
+// выход из игры
+let exit = false;
+// очки
+let score = 0;
+// жизни
+let health = 3;
 
 let config = {
     // шар
     boll: {
         speed: {
-            x:0,
-            y:0
+            x: 0,
+            y: 0
         },
         position: {
             x: 0,
@@ -39,7 +47,7 @@ let config = {
             x: 0,
             y: 0
         },
-        size:{
+        size: {
             width: 100,
             height: 20
         }

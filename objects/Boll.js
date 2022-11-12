@@ -1,4 +1,3 @@
-
 /**
  * Класс для шарика
  */
@@ -12,7 +11,7 @@ class Boll extends ParentObject {
         super(false);
     }
 
-    setSpeed(speed){
+    setSpeed(speed) {
         this.speed_x = speed.x;
         this.speed_y = speed.y;
     }
@@ -54,10 +53,6 @@ class Boll extends ParentObject {
         }
         // нижняя стена
         if (this.y + this.height >= canvas.height) {
-            // this.y = canvas.height - this.height;
-            // this.changeVector('y');
-            // this.speed_x = 0;
-            // this.speed_y = 0;
             this.speed_y = Math.abs(this.speed_y);
             boll.setPositions(config.boll.position);
         }
@@ -76,7 +71,7 @@ class Boll extends ParentObject {
 
     }
 
-    go(){
+    go() {
         this.x += this.speed_x;
         this.y += this.speed_y;
     }

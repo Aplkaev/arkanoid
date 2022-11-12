@@ -1,5 +1,6 @@
-class Player extends Stick{
+class Player extends Stick {
     speed = 0
+
     constructor() {
         super(false);
     }
@@ -13,7 +14,7 @@ class Player extends Stick{
         context.fill()
         context.closePath();
 
-        
+
     }
 
     // всегда видимый
@@ -22,29 +23,37 @@ class Player extends Stick{
     }
 
     // задаем скорость смещения
-    keydown(key){
-        if(key === 'ArrowLeft'){
-            this.speed = - config.player.speed;
+    keydown(key) {
+        if (key === 'ArrowLeft') {
+            this.speed = -config.player.speed;
         }
-        if(key === 'ArrowRight'){
+        if (key === 'ArrowRight') {
             this.speed = config.player.speed;
         }
     }
 
+    keydownLeft() {
+        this.speed = -config.player.speed;
+    }
+
+    keydownRight() {
+        this.speed = config.player.speed;
+    }
+
     // выставляем скорость 0
-    keyup(){
+    keyup() {
         this.speed = 0;
     }
 
-    go(){
+    go() {
         this.x += this.speed;
     }
 
     checkPosition() {
-        if(this.x <= 0){
+        if (this.x <= 0) {
             this.x = 0;
         }
-        if(this.x + this.width >= canvas.width){
+        if (this.x + this.width >= canvas.width) {
             this.x = canvas.width - this.width;
         }
     }

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="bootstrap.css">
     <link rel="stylesheet" href="index.css">
 
     <script src="objects/config.js"></script>
@@ -19,8 +20,42 @@
     <title>Document</title>
 </head>
 <body>
-    <div id="map">
-        <canvas id="game"></canvas>
+
+<div class="w-50 back_to_menu d-none">
+    <button class="btn btn-dark">Назад в меню</button>
+</div>
+
+<div id="map">
+
+    <menu class="game_menu">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <button class="btn btn-info game_2_player">Два игрок</button>
+            </li>
+            <li class="nav-item">
+
+                <label>Введите сложность</label>
+                <br>
+                <input type="text" placeholder="Введите сложность" class="form-check-input game_level" value="5">
+
+            </li>
+            <li class="nav-item border-0">
+                <button class="btn btn-success game_start">Начать</button>
+            </li>
+        </ul>
+    </menu>
+    <canvas id="game"></canvas>
+</div>
+<div class="game_state">
+    <div>
+        Жизни:
+        <spa class="game_health"></spa>
     </div>
+    <div>
+        Очки:
+        <spa class="game_score"></spa>
+    </div>
+</div>
+
 </body>
 </html>

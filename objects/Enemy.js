@@ -1,4 +1,3 @@
-
 /**
  * Класс для прямоугольников
  */
@@ -7,7 +6,7 @@ class Enemy extends Stick {
     margin = 20;
 
     draw() {
-        if (this.invisible){
+        if (this.invisible) {
             return;
         }
         context.beginPath();
@@ -19,7 +18,7 @@ class Enemy extends Stick {
         this.checkPosition();
     }
 
-    setInvisible(){
+    setInvisible() {
         this.invisible = true;
     }
 }
