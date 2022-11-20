@@ -54,8 +54,34 @@ class Boll extends ParentObject {
         // нижняя стена
         if (this.y + this.height >= canvas.height) {
             this.speed_y = Math.abs(this.speed_y);
-            boll.setPositions(config.boll.position);
+            this.touchDown();
         }
+    }
+
+    touchDown(){
+        this.init_position();
+        this.init_speed();
+        desHealth();
+    }
+
+    /**
+     * Задаем позицию
+     * Нужен player и config
+     */
+    init_position(){
+        let position = new Position();
+        position.setY(player.y - this.height - 1)
+            .setX(player.x + player.width / 2 - this.width / 2);
+        boll.setPositions(position);
+    }
+
+    /**
+     * Задаем скорость
+     */
+    init_speed(){
+        config.boll.speed.x = getRandomArbitrary(-level, level);
+        config.boll.speed.y = -1 * getRandomArbitrary(1, level);
+        boll.setSpeed(config.boll.speed);
     }
 
     draw() {

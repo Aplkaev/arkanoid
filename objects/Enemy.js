@@ -20,5 +20,6 @@ class Enemy extends Stick {
 
     setInvisible() {
         this.invisible = true;
+        incScore();
     }
 }

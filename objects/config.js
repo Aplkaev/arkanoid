@@ -13,16 +13,24 @@ let level = 1;
 let debug_update = true;
 
 // количество противников заполняются равномерно
-let enemy_len = 10;
+let enemy_len = 20;
 // противники на карте
-let enemy_map = [];
+let enemy_map = [
+    [1,0,0,0,1],
+    [0,1,0,1,0],
+    [1,0,1,0,1]
+];
+
 // выход из игры
 let exit = false;
 // очки
 let score = 0;
 // жизни
 let health = 3;
-
+// игра окончена
+let game_over = false;
+// флаг для если игра окончилась и выйграл или проиграл
+let st_win = false;
 let config = {
     // шар
     boll: {
@@ -56,4 +64,16 @@ let config = {
 
 function getRandomArbitrary(min, max) {
     return Math.random() * (max - min) + min;
+}
+
+function incScore(){
+    score += 10;
+}
+function decScore(){
+    score -= 10;
+}
+
+function desHealth(){
+    health -= 1;
+    decScore();
 }

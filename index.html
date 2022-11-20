@@ -27,7 +27,7 @@
 
 <div id="map">
 
-    <menu class="game_menu">
+    <menu class="game_menu d-none">
         <ul class="nav flex-column">
             <li class="nav-item">
                 <button class="btn btn-info game_2_player">Два игрок</button>
@@ -36,7 +36,7 @@
 
                 <label>Введите сложность</label>
                 <br>
-                <input type="text" placeholder="Введите сложность" class="form-check-input game_level" value="5">
+                <input type="number" placeholder="Введите сложность" class="form-check-input game_level" value="5">
 
             </li>
             <li class="nav-item border-0">
@@ -44,6 +44,15 @@
             </li>
         </ul>
     </menu>
+    <section class="game_win">
+        <h1>Поздравлю</h1>
+        <button class="btn btn-success game_start">Начать сначала</button>
+    </section>
+    <section class="game_fail d-none">
+        <h1>Игра окончена</h1>
+        <button class="btn btn-success game_start">Начать сначала</button>
+
+    </section>
     <canvas id="game"></canvas>
 </div>
 <div class="game_state">
