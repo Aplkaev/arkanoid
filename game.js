@@ -1,6 +1,9 @@
 // инициализация
-function init_game() {
+function init_game(newLevel) {
     exit = false;
+    if (newLevel) {
+        level = newLevel;
+    }
 
 
     canvas = this.document.getElementById('game');
