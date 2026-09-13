@@ -104,29 +104,11 @@ class Boll extends ParentObject {
 
     go() {
         if(this.isStop) {
+            this.isStop = false;
             return;
         }
-        // this.x += this.speedX;
-        // this.y += this.speedY;
         this.x += this.speedX;
         this.y += this.speedY;
-
-        // Стены
-        if (this.x <= 0 || this.x + this.width >= canvas.width) {
-            this.speedX = -this.speedX;
-            this.x = Math.max(0, Math.min(canvas.width - this.width, this.x));
-        }
-
-        if (this.y <= 0) {
-            this.speedY = -this.speedY;
-        }
-
-        // Вылетел вниз
-        if (this.y > canvas.height) {
-            health--;
-            this.init_position();
-            this.init_speed(); // или сохраняй текущую скорость
-        }
     }
 
     stop(isStop) {
