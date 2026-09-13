@@ -86,3 +86,8 @@ body {
 .game_state {
     color: #fff;
 }
+
+.game_start { 
+        z-index: 10000;
+    position: relative;
+}

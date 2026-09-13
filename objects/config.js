@@ -1,21 +1,21 @@
 let canvas;
 let context;
-let fps = 120;
+let fps = 24;
 
 let player;
-let st_player = false;
+let stPlayer = false;
 let player2;
 let boll;
 let enemys = [];
 // уровень сложности
 let level = 1;
 // для остановки обновления картиник
-let debug_update = true;
+let debugUpdate = true;
 
 // количество противников заполняются равномерно
-let enemy_len = 20;
+let enemyLen = 20;
 // противники на карте
-let enemy_map = [
+let enemyMap = [
     [1,0,0,0,1],
     [0,1,0,1,0],
     [1,0,1,0,1]
@@ -28,9 +28,9 @@ let score = 0;
 // жизни
 let health = 3;
 // игра окончена
-let game_over = false;
+let gameOver = false;
 // флаг для если игра окончилась и выйграл или проиграл
-let st_win = false;
+let stWin = false;
 let config = {
     // шар
     boll: {

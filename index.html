@@ -6,17 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="bootstrap.css">
     <link rel="stylesheet" href="index.css">
-
-    <script src="objects/config.js"></script>
-    <script src="objects/ParentObject.js"></script>
-    <script src="objects/Position.js"></script>
-    <script src="objects/Boll.js"></script>
-    <script src="objects/Enemy.js"></script>
-    <script src="objects/Player.js"></script>
-    <script src="game.js"></script>
-
-    <script src="index.js"></script>
-
     <title>Document</title>
 </head>
 <body>
@@ -26,45 +15,57 @@
 </div>
 
 <div id="map">
-
-    <menu class="game_menu d-none">
+    <!-- УБРАЛ d-none - меню должно быть видно при старте -->
+    <menu class="game_menu">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <button class="btn btn-info game_2_player">Два игрок</button>
+                <button class="btn btn-info game_2_player">Два игрока</button>
             </li>
             <li class="nav-item">
-
                 <label>Введите сложность</label>
                 <br>
                 <input type="number" placeholder="Введите сложность" class="form-check-input game_level" value="5">
-
             </li>
             <li class="nav-item border-0">
                 <button class="btn btn-success game_start">Начать</button>
             </li>
         </ul>
     </menu>
-    <section class="game_win">
-        <h1>Поздравлю</h1>
-        <button class="btn btn-success game_start">Начать сначала</button>
+    
+    <!-- ДОБАВИЛ d-none - экраны победы/поражения скрыты -->
+    <section class="game_win d-none">
+        <h1>Поздравляю</h1>
+        <button class="btn btn-success" id="button_game_restart_win">Начать сначала</button>
     </section>
+    
     <section class="game_fail d-none">
         <h1>Игра окончена</h1>
-        <button class="btn btn-success game_start">Начать сначала</button>
-
+        <button class="btn btn-success" id="button_game_restart_fail">Начать сначала</button>
     </section>
+    
     <canvas id="game"></canvas>
 </div>
+
 <div class="game_state">
     <div>
         Жизни:
-        <spa class="game_health"></spa>
+        <span class="game_health"></span>
     </div>
     <div>
         Очки:
-        <spa class="game_score"></spa>
+        <span class="game_score"></span>
     </div>
 </div>
+
+<script src="objects/config.js"></script>
+<script src="objects/ParentObject.js"></script>
+<script src="objects/Stick.js"></script>
+<script src="objects/Position.js"></script>
+<script src="objects/Boll.js"></script>
+<script src="objects/Enemy.js"></script>
+<script src="objects/Player.js"></script>
+<script src="game.js"></script>
+<script src="index.js"></script>
 
 </body>
 </html>

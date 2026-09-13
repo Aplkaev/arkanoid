@@ -1,5 +1,13 @@
 class Player extends Stick {
     speed = 0
+    keys = {
+        left: false,
+        right: false
+    }
+    width = 100;
+    height = 20;
+    speed = 8;           // максимальная скорость
+    velocity = 0;        // текущая скорость (для плавности)
 
     constructor() {
         super(false);
@@ -33,21 +41,33 @@ class Player extends Stick {
     }
 
     keydownLeft() {
-        this.speed = -config.player.speed;
+        this.keys.left = true
     }
 
     keydownRight() {
-        this.speed = config.player.speed;
+        this.keys.right = true
+
     }
 
     // выставляем скорость 0
     keyup() {
-        this.speed = 0;
+        this.keys.left = false
+        this.keys.right = false
     }
 
     go() {
-        this.x += this.speed;
+        let target = 0;
+        if (this.keys.left)  target -= this.speed;
+        if (this.keys.right) target += this.speed;
+
+        this.velocity += (target - this.velocity) * 0.35; // плавность
+
+        this.x += this.velocity;
+
+        // Ограничение по краям экрана
+        this.x = Math.max(0, Math.min(canvas.width - this.width, this.x));
     }
+    
 
     checkPosition() {
         if (this.x <= 0) {

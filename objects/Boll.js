@@ -4,27 +4,27 @@
 class Boll extends ParentObject {
     width = 10;
     height = 10;
-    speed_x = 0;
-    speed_y = 0;
+    speedX = 0;
+    speedY = 0;
+    isStop = false;
 
     constructor() {
         super(false);
     }
 
     setSpeed(speed) {
-        this.speed_x = speed.x;
-        this.speed_y = speed.y;
+        this.speedX = speed.x;
+        this.speedY = speed.y;
+        // this.speedX = 1;
+        // this.speedY = 1;
     }
 
     changeVector(aox) {
-        // console.log('changeVector', aox, config.boll.speed);
         if (aox === 'x') {
-            // config.boll.speed.x *= -1;
-            this.speed_x *= -1;
+            this.speedX *= -1;
         }
         if (aox === 'y') {
-            // config.boll.speed.y *= -1;
-            this.speed_y *= -1;
+            this.speedY *= -1;
         }
     }
 
@@ -36,6 +36,13 @@ class Boll extends ParentObject {
     }
 
     checkPosition() {
+        // console.log({
+        //     'x':this.x,
+        //     'y':this.y,
+        //     'width':canvas.width,
+        //     'height':canvas.height
+        // });
+
         // левая стена
         if (this.x - this.height <= 0) {
             this.x = this.width;
@@ -59,8 +66,8 @@ class Boll extends ParentObject {
     }
 
     touchDown(){
-        this.init_position();
-        this.init_speed();
+        this.initPosition();
+        this.initSpeed();
         desHealth();
     }
 
@@ -68,7 +75,7 @@ class Boll extends ParentObject {
      * Задаем позицию
      * Нужен player и config
      */
-    init_position(){
+    initPosition(){
         let position = new Position();
         position.setY(player.y - this.height - 1)
             .setX(player.x + player.width / 2 - this.width / 2);
@@ -78,7 +85,7 @@ class Boll extends ParentObject {
     /**
      * Задаем скорость
      */
-    init_speed(){
+    initSpeed(){
         config.boll.speed.x = getRandomArbitrary(-level, level);
         config.boll.speed.y = -1 * getRandomArbitrary(1, level);
         boll.setSpeed(config.boll.speed);
@@ -93,12 +100,36 @@ class Boll extends ParentObject {
         context.fillStyle = this.color;
         context.fill();
         context.closePath();
-
-
     }
 
     go() {
-        this.x += this.speed_x;
-        this.y += this.speed_y;
+        if(this.isStop) {
+            return;
+        }
+        // this.x += this.speedX;
+        // this.y += this.speedY;
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        // Стены
+        if (this.x <= 0 || this.x + this.width >= canvas.width) {
+            this.speedX = -this.speedX;
+            this.x = Math.max(0, Math.min(canvas.width - this.width, this.x));
+        }
+
+        if (this.y <= 0) {
+            this.speedY = -this.speedY;
+        }
+
+        // Вылетел вниз
+        if (this.y > canvas.height) {
+            health--;
+            this.init_position();
+            this.init_speed(); // или сохраняй текущую скорость
+        }
+    }
+
+    stop(isStop) {
+        this.isStop = isStop
     }
 }

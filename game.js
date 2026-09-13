@@ -42,15 +42,15 @@ function init_object() {
     player = new Player();
     player.setPositions(config.player.position);
 
-    if (st_player) {
+    if (window.isTwoPlayer) {
         player2 = new Player();
         player2.setPositions(config.player.position);
     }
 
     boll = new Boll(false);
-    boll.init_position();
-    boll.init_speed();
-    for (let i = 0; i < enemy_len; i++) {
+    boll.initPosition();
+    boll.initSpeed();
+    for (let i = 0; i < enemyLen; i++) {
         enemys.push(new Enemy());
     }
 }
@@ -94,7 +94,7 @@ function draw_enemy(length_enemy) {
     let y = 20;
     let def_x = 10;
     let x = def_x;
-    if (!enemy_map) {
+    if (!enemyMap) {
         for (let index = 0; index < length_enemy; index++) {
             let _enemy = enemys[index];
             _enemy.setPosition(x, y);
@@ -106,22 +106,22 @@ function draw_enemy(length_enemy) {
             }
         }
     } else {
-        draw_enemy_map(length_enemy);
+        draw_enemyMap(length_enemy);
     }
 }
 
-function draw_enemy_map(length_enemy) {
+function draw_enemyMap(length_enemy) {
     let y = 20;
     let def_x = 10;
     let x = def_x;
     let index = 0;
     let draw_len = 0;
-    for (let _index = 0; _index < enemy_map.length; _index++) {
+    for (let _index = 0; _index < enemyMap.length; _index++) {
         x = def_x;
-        for (let __index = 0; __index < enemy_map[_index].length; __index++, index++) {
+        for (let __index = 0; __index < enemyMap[_index].length; __index++, index++) {
             let _enemy = enemys[index];
             _enemy.setPosition(x, y);
-            if (enemy_map[_index][__index]) {
+            if (enemyMap[_index][__index]) {
                 _enemy.draw();
                 draw_len++;
             }
@@ -163,7 +163,7 @@ function draw_player() {
 function draw() {
     draw_boll();
     draw_player();
-    draw_enemy(enemy_len);
+    draw_enemy(enemyLen);
     update_state();
 }
 
@@ -188,7 +188,7 @@ function clear_state() {
 function update() {
     setTimeout(() => {
         // для остановки обновления игры
-        if (debug_update === false) return;
+        if (debugUpdate === false) return;
 
         // очищаем белым квадратом экран
         context.clearRect(0, 0, canvas.width, canvas.height);
