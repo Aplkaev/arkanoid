@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="bootstrap.css">
     <link rel="stylesheet" href="index.css">
-    <title>Document</title>
+    <title>Арканоид</title>
 </head>
 <body>
 
@@ -19,12 +19,12 @@
     <menu class="game_menu">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <button class="btn btn-info game_2_player">Два игрока</button>
+                <button class="btn btn-info game_2_player">Два игрока: выкл</button>
             </li>
             <li class="nav-item">
-                <label>Введите сложность</label>
+                <label>Сложность (1–10)</label>
                 <br>
-                <input type="number" placeholder="Введите сложность" class="form-check-input game_level" value="5">
+                <input type="number" placeholder="Сложность" class="form-check-input game_level" value="5" min="1" max="10">
             </li>
             <li class="nav-item border-0">
                 <button class="btn btn-success game_start">Начать</button>

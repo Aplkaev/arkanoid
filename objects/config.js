@@ -1,6 +1,7 @@
 let canvas;
 let context;
-let fps = 24;
+// шагов логики в секунду (скорости ниже заданы в пикселях за шаг)
+let fps = 60;
 
 let player;
 let stPlayer = false;
@@ -32,8 +33,16 @@ let gameOver = false;
 // флаг для если игра окончилась и выйграл или проиграл
 let stWin = false;
 let config = {
+    // внутреннее разрешение canvas
+    canvas: {
+        width: 600,
+        height: 400
+    },
     // шар
     boll: {
+        // скорость = baseSpeed + level * levelSpeed (пикселей за шаг)
+        baseSpeed: 2,
+        levelSpeed: 0.5,
         speed: {
             x: 0,
             y: 0
@@ -49,7 +58,7 @@ let config = {
     },
     // платформа
     player: {
-        speed: 5,
+        speed: 8,
         // при инциализации цинтрируем
         position: {
             x: 0,
@@ -59,6 +68,15 @@ let config = {
             width: 100,
             height: 20
         }
+    },
+    // кирпичи (ширина считается из количества колонок)
+    enemy: {
+        cols: 5,
+        padding: 10,
+        gap: 10,
+        top: 20,
+        height: 20,
+        colors: ['#C44ED9', '#4E7BD9', '#D9A04E', '#4ED98A']
     }
 };
 

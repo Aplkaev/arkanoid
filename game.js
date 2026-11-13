@@ -1,183 +1,159 @@
+// id текущего requestAnimationFrame, чтобы при рестарте не запускать второй цикл
+let loopId = 0;
+let lastTime = 0;
+let accumulator = 0;
+
 // инициализация
 function init_game(newLevel) {
-    exit = false;
     if (newLevel) {
         level = newLevel;
     }
 
+    cancelAnimationFrame(loopId);
+    exit = false;
+    clear_state();
 
-    canvas = this.document.getElementById('game');
-    canvas.height = canvas.offsetHeight;
-    canvas.width = canvas.offsetWidth;
+    canvas = document.getElementById('game');
+    // внутреннее разрешение фиксированное, CSS только масштабирует картинку —
+    // так коллизии не зависят от размера окна
+    canvas.width = config.canvas.width;
+    canvas.height = config.canvas.height;
     context = canvas.getContext('2d');
 
-
-    let center_player = canvas.offsetWidth / 2 - config.player.size.width / 2;
-    let bottom_player = canvas.offsetHeight - 50;
-    config.player.position.x = center_player;
-    config.player.position.y = bottom_player;
-    // config.player.position.y = 250;
-
-    // let center_boll = canvas.offsetWidth / 2 - config.boll.size.width / 2;
-    // let bottom_boll = config.player.position.y - config.boll.size.height;
-    // config.boll.position.x = center_boll;
-    // config.boll.position.y = bottom_boll;
-    //
-    // config.boll.speed.x = getRandomArbitrary(-level, level);
-    // config.boll.speed.y = -1 * getRandomArbitrary(1, level);
-
-
     init_object();
-    draw();
-    init_events();
-    requestAnimationFrame(update);
+
+    lastTime = performance.now();
+    accumulator = 0;
+    loopId = requestAnimationFrame(update);
 }
 
 function close_game() {
     exit = true;
+    cancelAnimationFrame(loopId);
+    if (context) {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+    }
     clear_state();
     player = undefined;
     player2 = undefined;
+    enemys = [];
 }
 
 
 function init_object() {
+    let y = canvas.height - 50;
+    let width = config.player.size.width;
+
     player = new Player();
-    player.setPositions(config.player.position);
+    player.setColor('#000000');
 
     if (window.isTwoPlayer) {
+        // платформы рядом, а не друг на друге
+        player.setPosition(canvas.width / 3 - width / 2, y);
         player2 = new Player();
-        player2.setPositions(config.player.position);
+        player2.setColor('#29E69D');
+        player2.setPosition(canvas.width * 2 / 3 - width / 2, y);
+    } else {
+        player.setPosition(canvas.width / 2 - width / 2, y);
     }
 
-    boll = new Boll(false);
+    boll = new Boll();
     boll.initPosition();
     boll.initSpeed();
-    for (let i = 0; i < enemyLen; i++) {
-        enemys.push(new Enemy());
-    }
+
+    init_enemies();
 }
 
-function init_events() {
-    document.addEventListener('keydown',
-        (event) => {
-            if (event.key === 'ArrowLeft') {
-                player.keydownLeft();
-            }
-            if (event.key === 'ArrowRight') {
-                player.keydownRight();
-            }
-            // управление для второго игрока
-            if (player2 !== undefined) {
-                if (event.key === 'a') {
-                    player2.keydownLeft();
-                }
-                if (event.key === 'd') {
-                    player2.keydownRight();
-                }
-            }
+// раскладываем кирпичи по карте так, чтобы ряд занимал всю ширину canvas
+function init_enemies() {
+    enemys = [];
+
+    let map = enemyMap;
+    if (!map) {
+        // карты нет — равномерная сетка на enemyLen кирпичей
+        map = [];
+        for (let i = 0; i < enemyLen; i += config.enemy.cols) {
+            map.push(new Array(Math.min(config.enemy.cols, enemyLen - i)).fill(1));
+        }
+    }
+
+    let cols = Math.max(...map.map(row => row.length));
+    let { padding, gap, top, height, colors } = config.enemy;
+    let width = (canvas.width - padding * 2 - gap * (cols - 1)) / cols;
+
+    map.forEach((row, r) => {
+        row.forEach((cell, c) => {
+            if (!cell) return;
+            let enemy = new Enemy();
+            enemy.width = width;
+            enemy.height = height;
+            enemy.setColor(colors[r % colors.length]);
+            enemy.setPosition(padding + c * (width + gap), top + r * (height + gap));
+            enemys.push(enemy);
         });
-    document.addEventListener('keyup', (event) => {
-        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
-            player.keyup();
-        }
-        // управление для второго игрока
-        if (player2 !== undefined) {
-            if (event.key === 'a' || event.key === 'd') {
-                player2.keyup();
-            }
-        }
     });
 }
 
-/** ############### ренедр ####################*/
-
-// рисуем врагов
-function draw_enemy(length_enemy) {
-    let y = 20;
-    let def_x = 10;
-    let x = def_x;
-    if (!enemyMap) {
-        for (let index = 0; index < length_enemy; index++) {
-            let _enemy = enemys[index];
-            _enemy.setPosition(x, y);
-            _enemy.draw();
-            x += _enemy.width + _enemy.margin;
-            if (_enemy.x >= canvas.offsetWidth - _enemy.width - _enemy.margin) {
-                y += _enemy.height + _enemy.margin;
-                x = def_x;
-            }
+// управление: стрелки — первый игрок, A/D — второй.
+// event.code не зависит от раскладки (работает и на русской)
+function handle_key(event, pressed) {
+    let controls = [
+        [player, 'ArrowLeft', 'ArrowRight'],
+        [player2, 'KeyA', 'KeyD'],
+    ];
+    for (let [_player, left, right] of controls) {
+        if (_player === undefined) continue;
+        if (event.code === left) {
+            _player.setKey('left', pressed);
+            event.preventDefault();
         }
-    } else {
-        draw_enemyMap(length_enemy);
-    }
-}
-
-function draw_enemyMap(length_enemy) {
-    let y = 20;
-    let def_x = 10;
-    let x = def_x;
-    let index = 0;
-    let draw_len = 0;
-    for (let _index = 0; _index < enemyMap.length; _index++) {
-        x = def_x;
-        for (let __index = 0; __index < enemyMap[_index].length; __index++, index++) {
-            let _enemy = enemys[index];
-            _enemy.setPosition(x, y);
-            if (enemyMap[_index][__index]) {
-                _enemy.draw();
-                draw_len++;
-            }
-            x += _enemy.width + _enemy.margin;
-            if (_enemy.x >= canvas.offsetWidth - _enemy.width - _enemy.margin) {
-                y += _enemy.height + _enemy.margin;
-                x = def_x;
-            }
+        if (event.code === right) {
+            _player.setKey('right', pressed);
+            event.preventDefault();
         }
     }
-    if (draw_len == 0) {
-        win_game();
-    }
 }
 
-// рисуем мяч
-function draw_boll() {
-    boll.go();
-    boll.draw();
-}
+/** ############### логика ####################*/
 
-// рисуем игрока
-function draw_player() {
+// один шаг игры фиксированной длины
+function step() {
     player.go();
-    player.setColor('#000000');
     player.touch(boll);
-    player.draw();
-
     if (player2 !== undefined) {
-        console.log('draw 2 palyer', player2);
         player2.go();
-        player2.setColor('#29E69D');
         player2.touch(boll);
+    }
+
+    boll.go();
+    boll.checkPosition();
+    boll.checkTouchBeam();
+
+    if (enemys.every(enemy => enemy.invisible)) {
+        win_game();
+        return;
+    }
+    if (health <= 0) {
+        fail_game();
+    }
+}
+
+/** ############### рендер ####################*/
+
+function draw() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    enemys.forEach(enemy => enemy.draw());
+    player.draw();
+    if (player2 !== undefined) {
         player2.draw();
     }
-}
-
-// рисуем все
-function draw() {
-    draw_boll();
-    draw_player();
-    draw_enemy(enemyLen);
+    boll.draw();
     update_state();
 }
 
 function update_state() {
     document.querySelector('.game_health').innerHTML = health;
     document.querySelector('.game_score').innerHTML = score;
-
-    if (health == 0) {
-        fail_game()
-    }
-
 }
 
 function clear_state() {
@@ -188,21 +164,24 @@ function clear_state() {
 }
 
 
-function update() {
-    setTimeout(() => {
-        // для остановки обновления игры
-        if (debugUpdate === false) return;
+// игровой цикл: логика идёт фиксированными шагами 1000/fps мс,
+// поэтому скорость игры не зависит от частоты монитора
+function update(time) {
+    // для остановки обновления игры
+    if (exit || debugUpdate === false) return;
 
-        // очищаем белым квадратом экран
-        context.clearRect(0, 0, canvas.width, canvas.height);
+    // ограничиваем, чтобы после сворачивания вкладки мяч не "телепортировался"
+    accumulator += Math.min(time - lastTime, 250);
+    lastTime = time;
 
-        // если игру остановили
-        if (exit === true) return;
+    let stepTime = 1000 / fps;
+    while (accumulator >= stepTime) {
+        step();
+        // игра могла закончиться внутри шага
+        if (exit) return;
+        accumulator -= stepTime;
+    }
 
-        // отрисовка
-        draw()
-
-        // рекурсивный запуск через Animation
-        requestAnimationFrame(update);
-    }, 1000 / fps);
+    draw();
+    loopId = requestAnimationFrame(update);
 }

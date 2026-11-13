@@ -15,6 +15,10 @@ function init_event(){
     
     // Обработчик для кнопки "Два игрока" - УБРАЛ скобки ()
     document.querySelector('.game_2_player').addEventListener('click', game_2_player);
+
+    // клавиатура вешается один раз, а не при каждом старте игры
+    document.addEventListener('keydown', (event) => handle_key(event, true));
+    document.addEventListener('keyup', (event) => handle_key(event, false));
 }
 
 function game_2_player() { 
@@ -26,6 +30,7 @@ function game_2_player() {
         document.querySelector('.game_2_player').classList.remove('btn-secondary');
         document.querySelector('.game_2_player').classList.add('btn-info');
     }
+    document.querySelector('.game_2_player').textContent = stPlayer ? 'Два игрока: вкл' : 'Два игрока: выкл';
     // Сохраняем состояние для использования в игре
     window.isTwoPlayer = stPlayer;
 }
@@ -47,9 +52,11 @@ function start_game() {
     
     // Получаем уровень сложности
     let level = parseInt(document.querySelector('.game_level').value);
-    if (!level || level < 1) {
+    if (!level) {
         level = 5;
     }
+    level = Math.min(10, Math.max(1, level));
+    document.querySelector('.game_level').value = level;
     
     // Запускаем игру
     init_game(level);

@@ -6,7 +6,6 @@ class Boll extends ParentObject {
     height = 10;
     speedX = 0;
     speedY = 0;
-    isStop = false;
 
     constructor() {
         super(false);
@@ -15,8 +14,6 @@ class Boll extends ParentObject {
     setSpeed(speed) {
         this.speedX = speed.x;
         this.speedY = speed.y;
-        // this.speedX = 1;
-        // this.speedY = 1;
     }
 
     changeVector(aox) {
@@ -28,90 +25,78 @@ class Boll extends ParentObject {
         }
     }
 
+    // за шаг разбиваем максимум один кирпич, иначе при ударе в стык двух
+    // кирпичей скорость развернётся дважды и мяч пролетит насквозь
     checkTouchBeam() {
         for (let i = 0; i < enemys.length; i++) {
-            if (enemys[i] === undefined) return;
-            enemys[i].touch(boll);
+            if (enemys[i].touch(this)) return;
         }
     }
 
     checkPosition() {
-        // console.log({
-        //     'x':this.x,
-        //     'y':this.y,
-        //     'width':canvas.width,
-        //     'height':canvas.height
-        // });
+        // x/y — левый верхний угол ограничивающего прямоугольника мяча
+        // (как у Stick/Enemy), width/height — его размер. Отрисовка в draw()
+        // переводит это в центр+радиус только для canvas.arc().
+        // Направление задаём явно (abs), а не инвертируем — иначе мяч может залипнуть в стене.
 
         // левая стена
-        if (this.x - this.height <= 0) {
-            this.x = this.width;
-            this.changeVector('x');
+        if (this.x <= 0) {
+            this.x = 0;
+            this.speedX = Math.abs(this.speedX);
         }
         // правая стена
         if (this.x + this.width >= canvas.width) {
             this.x = canvas.width - this.width;
-            this.changeVector('x');
+            this.speedX = -Math.abs(this.speedX);
         }
         // верхняя стена
-        if (this.y - this.height <= 0) {
-            this.y = this.height;
-            this.changeVector('y');
+        if (this.y <= 0) {
+            this.y = 0;
+            this.speedY = Math.abs(this.speedY);
         }
         // нижняя стена
         if (this.y + this.height >= canvas.height) {
-            this.speed_y = Math.abs(this.speed_y);
             this.touchDown();
         }
     }
 
     touchDown(){
+        desHealth();
         this.initPosition();
         this.initSpeed();
-        desHealth();
     }
 
     /**
-     * Задаем позицию
-     * Нужен player и config
+     * Ставим мяч над платформой первого игрока
      */
     initPosition(){
         let position = new Position();
         position.setY(player.y - this.height - 1)
             .setX(player.x + player.width / 2 - this.width / 2);
-        boll.setPositions(position);
+        this.setPositions(position);
     }
 
     /**
-     * Задаем скорость
+     * Запускаем вверх под случайным углом, скорость зависит от сложности
      */
     initSpeed(){
-        config.boll.speed.x = getRandomArbitrary(-level, level);
-        config.boll.speed.y = -1 * getRandomArbitrary(1, level);
-        boll.setSpeed(config.boll.speed);
+        let speed = config.boll.baseSpeed + level * config.boll.levelSpeed;
+        let angle = getRandomArbitrary(-Math.PI / 4, Math.PI / 4);
+        config.boll.speed.x = Math.sin(angle) * speed;
+        config.boll.speed.y = -Math.cos(angle) * speed;
+        this.setSpeed(config.boll.speed);
     }
 
     draw() {
-        this.checkPosition();
-        this.checkTouchBeam();
-
         context.beginPath();
-        context.arc(this.x, this.y, this.width, 0, 2 * Math.PI);
+        context.arc(this.x + this.width / 2, this.y + this.height / 2, this.width / 2, 0, 2 * Math.PI);
         context.fillStyle = this.color;
         context.fill();
         context.closePath();
     }
 
     go() {
-        if(this.isStop) {
-            this.isStop = false;
-            return;
-        }
         this.x += this.speedX;
         this.y += this.speedY;
-    }
-
-    stop(isStop) {
-        this.isStop = isStop
     }
 }

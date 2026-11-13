@@ -3,8 +3,6 @@
  */
 class Enemy extends Stick {
 
-    margin = 20;
-
     touch(boll) {
 
         if (this.invisible || !this.intersects(boll)) {
@@ -16,38 +14,27 @@ class Enemy extends Stick {
         const overlapRight  = (this.x + this.width) - boll.x;
         const overlapTop    = (boll.y + boll.height) - this.y;
         const overlapBottom = (this.y + this.height) - boll.y;
-        
-        if (boll.isStop) { 
-            return false;
-        }
-        
-        console.log({
-            'overlapLeft':overlapLeft,
-            'overlapRight':overlapRight,
-            'overlapTop':overlapTop,
-            'overlapBottom':overlapBottom
-        });
-        
-        // Находим сторону с наименьшим перекрытием
+
+        // Находим сторону с наименьшим перекрытием и выталкиваем мяч за неё
         const minOverlap = Math.min(overlapLeft, overlapRight, overlapTop, overlapBottom);
 
-        if (minOverlap === overlapTop || minOverlap === overlapBottom) {
-            // Удар сверху или снизу → меняем вертикальную скорость
-            boll.speedY = -boll.speedY;
+        if (minOverlap === overlapTop) {
+            boll.y = this.y - boll.height;
+            boll.speedY = -Math.abs(boll.speedY);
+        } else if (minOverlap === overlapBottom) {
+            boll.y = this.y + this.height;
+            boll.speedY = Math.abs(boll.speedY);
+        } else if (minOverlap === overlapLeft) {
+            boll.x = this.x - boll.width;
+            boll.speedX = -Math.abs(boll.speedX);
         } else {
-            // Удар сбоку → меняем горизонтальную скорость
-            boll.speedX = -boll.speedX;
+            boll.x = this.x + this.width;
+            boll.speedX = Math.abs(boll.speedX);
         }
 
         // Разрушаем блок
         this.invisible = true;
         incScore();
-
-        // Лёгкий "отскок" мяча от блока, чтобы не залипал
-        if (minOverlap === overlapTop)    boll.y = this.y - boll.height;
-        if (minOverlap === overlapBottom) boll.y = this.y + this.height;
-        
-        boll.stop(true);
 
         return true;
     }
@@ -61,12 +48,5 @@ class Enemy extends Stick {
         context.fillStyle = this.color;
         context.fill()
         context.closePath();
-
-        this.checkPosition();
-    }
-
-    setInvisible() {
-        this.invisible = true;
-        incScore();
     }
 }
